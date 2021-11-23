@@ -1,6 +1,3 @@
-<template>
-  <a-table v-bind="$attrs" :data-source="dataSource" :customRow="customRow" :components="components"></a-table>
-</template>
 <script>
 export default {
   name: "DrapTable",
@@ -26,6 +23,7 @@ export default {
           },
         },
       },
+      expandedRow: [],
     };
   },
   props: {
@@ -33,14 +31,17 @@ export default {
       type: Array,
     },
   },
+  mounted() {
+    this.expandedRow = [];
+  },
   methods: {
     swapArray(arr, idx1, idx2) {
       arr[idx1] = arr.splice(idx2, 1, arr[idx1])[0];
     },
-    customRow(record, index) {
+    customRow(_, index) {
       return {
         attrs: {
-          draggable: "true",
+          draggable: true,
         },
         style: {
           cursor: "pointer",
@@ -79,6 +80,26 @@ export default {
         },
       };
     },
+    expandedRowsChange(expandedRow) {
+      this.expandedRow = expandedRow;
+    },
+  },
+  render(createElement) {
+    return createElement("a-table", {
+      attrs: {
+        ...this.$attrs,
+        dataSource: this.$props.dataSource,
+        customRow: this.customRow,
+        components: this.components,
+        defaultExpandAllRows: true,
+        expandedRowKeys: this.expandedRow,
+      },
+      on: {
+        ...this.$listeners,
+        expandedRowsChange: this.expandedRowsChange
+      },
+      scopedSlots: this.$scopedSlots,
+    });
   },
 };
 </script>

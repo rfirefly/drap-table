@@ -1,11 +1,18 @@
 <template>
   <div id="app">
-    <drap-table :columns="columns" :data-source="data"></drap-table>
+    <drap-table :columns="columns" :data-source="data">
+      <a-table  slot="expandedRowRender" :columns="innerColumns" :data-source="innerData" rowKey="name" :pagination="false">
+      </a-table>
+    </drap-table>
+    <a-button @click="showSomething">look</a-button>
+
+    <!-- <Test></Test> -->
   </div>
 </template>
 
 <script>
 import DrapTable from "./components/DrapTable";
+// import Test from "./components/Test.vue"
 const columns = [
   {
     title: "Name",
@@ -83,16 +90,77 @@ const data = [
   },
 ];
 
+const innerColumns = [
+  {
+    title: "kaa",
+    dataIndex: "name",
+    key: "name",
+    scopedSlots: { customRender: "name" },
+  },
+  {
+    title: "kvb",
+    dataIndex: "age",
+    key: "age",
+    width: 80,
+  },
+];
+
+const innerData = [
+  {
+    name: "aa",
+    age: 20,
+  },
+  {
+    name: "bb",
+    age: 21,
+  },
+];
+
 export default {
   name: "App",
   components: {
     DrapTable,
+    // Test
   },
   data() {
     return {
       data,
       columns,
+      innerColumns,
+      innerData,
     };
+  },
+  mounted() {
+  },
+  methods: {
+    handleClick() {
+      this.data.push({
+        key: this.data.length + 1,
+        name: "Jim Green",
+        age: 5,
+        address: "London No. 2 Lake Park, London No. 2 Lake Park",
+        tags: ["loser"],
+      });
+    },
+    expandedRowRender() {
+      let createElement = this.$createElement;
+      return createElement(
+        "a-table",
+        {
+          attrs: {
+            columns: this.innerColumns,
+            dataSource: this.innerData,
+            pagination: false,
+          },
+        },
+        ["5555"]
+        // this.$slots.default
+      );
+    },
+    showSomething() {
+      
+      console.log('this.expandedRow: ', this.expandedRow);
+    },
   },
 };
 </script>
